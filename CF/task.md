@@ -19,12 +19,3 @@ Here:
    * the DB EC2 instance is not accessible from outside VPC and has not access to the Internet
 
 **Optional Task is not mandatory for completion this module but highly recommended, if you don’t have a time to complete it - just skip it*
-
-## What should I remember?
-> - Once you create AWS Account -> Setup Multi-factor Authentication
-> - Do NOT share your account
-> - Do NOT commit your account Credentials into the Git
-> - Terminate/Remove all created resources/services once you finish Module
-> - Please Do not forget to delete NAT Gateway if you used it.
-> - Do NOT keep instance running if you don’t use it
-> - Carefully keep track of billing and working instances so you don't exceed limits 
