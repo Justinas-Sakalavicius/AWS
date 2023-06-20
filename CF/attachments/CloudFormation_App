@@ -1,4 +1,3 @@
-App
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   AppSubnetId:
@@ -75,7 +74,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref AppSubnetId
-      ImageId: ami-043097594a7df80ec
+      ImageId: ami-019683f230776854f
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
@@ -102,7 +101,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref DBSubnetId
-      ImageId: ami-043097594a7df80ec
+      ImageId: ami-019683f230776854f
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
