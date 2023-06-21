@@ -1,4 +1,3 @@
-AWSTemplateFormatVersion: 2010-09-09
 Metadata:
   'AWS::CloudFormation::Designer':
     5e91e874-582c-4472-b68a-acca852cb245:

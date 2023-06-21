@@ -1,4 +1,3 @@
-AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   AppSubnetId:
     Type: 'AWS::EC2::Subnet::Id'
@@ -74,8 +73,8 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref AppSubnetId
-      ImageId: ami-019683f230776854f
-      InstanceType: t2.micro
+      ImageId: ami-0def1e27f6675f4f9
+      InstanceType: t3.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
         - !Ref PublicHttp
@@ -86,14 +85,14 @@ Resources:
           Value: !Sub 'App-${AWS::StackName}'
       UserData:
         'Fn::Base64': !Sub |
-          #cloud-config
-          repo_update: true
-          repo_upgrade: all
-          packages:
-           - httpd
-          runcmd:
-            - sudo systemctl start httpd
-            - sudo systemctl enable httpd
+          #!/bin/bash
+          dnf install -y dotnet-sdk-6.0
+          mkdir web-app
+          aws s3 cp s3://justinas-sakalavicius-task2-web-app web-app --recursive
+          cd web-app
+          unzip awsRegionsAZ.zip
+          cd ./publish/
+          dotnet awsRegionsAZ.dll --urls "http://0.0.0.0:80"
     Metadata:
       'AWS::CloudFormation::Designer':
         id: bab3b089-66d5-4fcb-806c-2b39c9c9bbaa
@@ -101,8 +100,8 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref DBSubnetId
-      ImageId: ami-019683f230776854f
-      InstanceType: t2.micro
+      ImageId: ami-0def1e27f6675f4f9
+      InstanceType: t3.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
         - !Ref InternalTraffic
