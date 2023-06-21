@@ -64,12 +64,12 @@
 ### Sub-task 4 – create a load-balanced application
 
 1. Create a simple project using your preferred language/frameworks/build tools. Feel free to customize it as you wish, but keep it simple and keep in mind the following points:
-   - any code must be hosted on [EPAM’s GitLab](https://git.epam.com/)
+   - any code must be hosted on github
    - automate creation of deployable artifacts
    - right now, there will be just one artifact – a very simple web-application (the details are below)
    - throughout the subsequent modules, you will have to produce another artifact which will share some code with the web-application
    - so, use something like Gradle multi-module project for Java or multi-package project for Python/NodeJS
-2. In your project, create a simple web-application with one endpoint (UI page, REST API endpoint, or else) which would return the name of the region and AZ the application is running in (use [this API](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/util/EC2MetadataUtils.html)).
+2. In your project, create a simple web-application with one endpoint (UI page, REST API endpoint, or else) which would return the name of the region and AZ the application is running in.
 3. Build your application and upload the resulting artifact (JAR, ZIP, TAR, or else) to S3.
 4. Create another custom AMI based on one created in the sub-task 2:
    - install a runtime for your web-application (Tomcat for Spring MVC, or JVM for Spring Boot, or NodeJS, or Python packages, or else)
