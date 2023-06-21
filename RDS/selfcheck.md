@@ -1,39 +1,40 @@
 # AWS  Database Services
 
 ## Self-check
+
 ### 1. What's the difference between Relational, NoSQL and In-Memory databases?
 
-Relational, NoSQL, and in-memory databases are all types of databases used to store and retrieve data, but they differ in their structure, storage model, scalability, and use-cases.
+ - Relational, NoSQL, and in-memory databases are all types of databases used to store and retrieve data, but they differ in their structure, storage model, scalability, and use-cases.
 
 `Relational Databases:`
 
     Relational databases, such as MySQL, Oracle, and PostgreSQL, use a relational model where data is stored in tables and the relationship between data is also stored in tables. Each table has a schema that defines the structure of data in that table. These databases use SQL (Structured Query Language) for defining and manipulating the data.
 
-- Structure: Relational databases are table-based, meaning data is organized into tables which consist of rows and columns. Each column represents an attribute and each row represents a single record.
+- `Structure`: Relational databases are table-based, meaning data is organized into tables which consist of rows and columns. Each column represents an attribute and each row represents a single record.
 
-- Scalability: They are typically scaled vertically by increasing the hardware capabilities of a single server.
+- `Scalability`: They are typically scaled vertically by increasing the hardware capabilities of a single server.
 
-- Use cases: They are often used when data integrity is crucial, such as in banking systems or for any application where data needs to be consistent and transactions need to be atomic.
+- `Use cases`: They are often used when data integrity is crucial, such as in banking systems or for any application where data needs to be consistent and transactions need to be atomic.
 
 `NoSQL Databases:`
 
     NoSQL (Not Only SQL) databases, such as MongoDB, Cassandra, and Redis, are non-relational and can handle unstructured data. They don't use tables for data storage and can be schema-less.
 
-- Structure: NoSQL databases have various data models such as document, key-value, wide-column, or graph. They are designed to be flexible, scalable, and able to handle large volumes of data.
+- `Structure`: NoSQL databases have various data models such as document, key-value, wide-column, or graph. They are designed to be flexible, scalable, and able to handle large volumes of data.
 
-- Scalability: They are designed to be scaled out over many servers, making them a good fit for big data and real-time applications.
+- `Scalability`: They are designed to be scaled out over many servers, making them a good fit for big data and real-time applications.
 
-- Use cases: They are often used when large amounts of distributed data are to be handled, or when the data model is subject to frequent changes, such as for social networks, real-time analytics, and big data applications.
+- `Use cases`: They are often used when large amounts of distributed data are to be handled, or when the data model is subject to frequent changes, such as for social networks, real-time analytics, and big data applications.
 
 `In-Memory Databases:`
 
     In-memory databases, such as Redis and SAP HANA, store data in main memory rather than on disk, leading to much faster data access and manipulation.
 
- - Structure: The structure can vary, and many in-memory databases support various data models, including relational and NoSQL models.
+ - `Structure`: The structure can vary, and many in-memory databases support various data models, including relational and NoSQL models.
 
- - Scalability: They can be scaled up by adding more memory or scaled out by distributing data across multiple servers.
+ - `Scalability`: They can be scaled up by adding more memory or scaled out by distributing data across multiple servers.
 
- - Use cases: They are often used when high-speed data access, storage, and manipulation are needed, such as in caching, session management, gaming, real-time analytics, and high-frequency trading.
+ - `Use cases`: They are often used when high-speed data access, storage, and manipulation are needed, such as in caching, session management, gaming, real-time analytics, and high-frequency trading.
 
 ### 2. If you need to store simple data(string/integer) in cache, will you use Redis or Memcached?
 
@@ -41,27 +42,27 @@ Relational, NoSQL, and in-memory databases are all types of databases used to st
 
 `Redis:`
 
- - Redis not only supports simple key-value data but also more complex types such as lists, sets, sorted sets, and hashes.
+ - Redis not only supports `simple key-value data` but also more `complex types` such as `lists`, `sets`, `sorted sets`, and `hashes`.
 
- - Redis allows you to persist your data to the disk. This means that in the event of a system failure, you won't lose all your data. However, this feature is optional and can be turned off if the durability of data is not a concern.
+ - Redis allows you to `persist your data to the disk`. This means that in the event of a `system failure`, `you won't lose all your data`. However, this feature is optional and can be turned off if the durability of data is not a concern.
 
- - Redis supports transactions, which means that you can group several operations to be executed as a single atomic operation.
+ - Redis `supports transactions`, which means that you can group several operations to be executed as a single atomic operation.
 
- - Redis supports master-slave replication.
+ - Redis `supports master-slave replication`.
 
 `Memcached:`
 
-- Memcached only supports simple key-value data.
+- Memcached only `supports simple key-value data`.
 
-- Memcached does not support data persistence. If the system fails or restarts, all data stored in the cache will be lost.
+- Memcached `does not support data persistence`. If the system fails or restarts, all data stored in the cache will be lost.
 
-- Memcached does not support transactions.
+- Memcached does not support `transactions`.
 
-- Memcached doesn't natively support replication, though there are third-party solutions available.
+- Memcached `doesn't natively support replication`, though there are third-party solutions available.
 
 ### 3. When you want to make sure you get the latest data from DynamoDB, which type of read will you use?
 
- ***If the latest data is critical for your application, it would be best to use a strongly consistent read**.
+- If the `latest data` is `critical` for your application, it would be best to use a `strongly consistent read`.
 
 `DynamoDB offers two types of read consistency:`
 
@@ -87,12 +88,12 @@ Relational, NoSQL, and in-memory databases are all types of databases used to st
 
 - `Amazon RDS` manages backups, software patching, automatic failure detection, and recovery.
 
-  1) Manual Backups
-  2) Automated Backups
-  3) Snapshot Backups
-  4) Continuous Backups
-  5) Replication
-  6) Third-Party Tool
+  1) `Manual Backups`
+  2) `Automated Backups`
+  3) `Snapshot Backups`
+  4) `Continuous Backups`
+  5) `Replication`
+  6) `Third-Party Tool`
   
 ### 6. What is RDS? What engines does it support? 
 
@@ -100,19 +101,19 @@ Relational, NoSQL, and in-memory databases are all types of databases used to st
   
     Amazon RDS supports the following database engines:
 
-  - Amazon Aurora: Amazon's proprietary database engine compatible with MySQL and PostgreSQL.
+  - `Amazon Aurora`: Amazon's proprietary database engine compatible with MySQL and PostgreSQL.
 
-  - MySQL: One of the most popular open-source relational database systems.
+  - `MySQL`: One of the most popular open-source relational database systems.
 
-  - PostgreSQL: An advanced, enterprise-class, and open-source relational database system.
+  - `PostgreSQL`: An advanced, enterprise-class, and open-source relational database system.
 
-  - MariaDB: A community-developed fork of MySQL, led by the original developers of MySQL.
+  - `MariaDB`: A community-developed fork of MySQL, led by the original developers of MySQL.
 
-  - Oracle Database: A popular commercial relational database system.
+  - `Oracle Database`: A popular commercial relational database system.
 
-  - SQL Server: Microsoft's relational database management system.
+  - `SQL Server`: Microsoft's relational database management system.
 
-  - DB2 (on Linux, UNIX, and Windows servers): IBM's database software, primarily used for running online transaction processing (OLTP) and data warehousing workloads.
+  - `DB2` (on Linux, UNIX, and Windows servers): IBM's database software, primarily used for running online transaction processing (OLTP) and data warehousing workloads.
 
 ### 7. What is RDS pricing? 
 
@@ -211,19 +212,19 @@ Relational, NoSQL, and in-memory databases are all types of databases used to st
 
   - Comparison:
     1) `Multi-AZ Deployments:`
-      - Multi-AZ deployments are primarily used for high availability and failover support. In a Multi-AZ deployment, Amazon RDS automatically provisions and maintains a synchronous standby replica of your DB instance in a different Availability Zone. The primary DB instance is synchronously replicated across Availability Zones to a standby replica to provide data redundancy, eliminate I/O freezes, and minimize latency spikes during system backups.
+      - `Multi-AZ deployments` are primarily used for `high availability` and `failover support`. In a Multi-AZ deployment, Amazon RDS automatically provisions and maintains a synchronous standby replica of your DB instance in a different Availability Zone. The primary DB instance is synchronously replicated across Availability Zones to a standby replica to provide data redundancy, eliminate I/O freezes, and minimize latency spikes during system backups.
 
-      - In the event of planned database maintenance, DB instance failure, or an Availability Zone failure, Amazon RDS automatically performs a failover to the standby, ensuring that your database operations can resume quickly without manual intervention.
+      - In the `event` of `planned database maintenance`, DB instance failure, or an Availability Zone failure, Amazon RDS automatically `performs a failover to the standby`, `ensuring` that your `database operations can resume quickly without manual intervention`.
 
-      - Multi-AZ deployments are a good fit for production workloads where downtime and data loss cannot be tolerated.
+      - `Multi-AZ deployments` are a good fit for production workloads where `downtime and data loss cannot be tolerated`.
     2) `Read Replicas:`
-      - Read Replicas, on the other hand, are primarily used to offload read traffic from your primary database instance. You can create one or more replicas of a given source DB Instance and serve high-volume application read traffic from multiple copies of your data, thereby increasing aggregate read throughput.
+      - `Read Replicas`, on the other hand, are primarily used to `offload read traffic from your primary database instance`. You can create `one or more replicas` of a given source DB Instance and serve `high-volume application read traffic from multiple copies of your data`, thereby `increasing aggregate read throughput`.
 
-      - Read Replicas are not used for automatic failover and do not protect against DB instance failure or Availability Zone failure. However, in the event of a failure of the primary DB instance, you can manually promote a Read Replica to become the new primary.
+      - `Read Replicas` are `not used for automatic failover` and do not protect against DB instance failure or Availability Zone failure. `However`, in the event of a failure of the primary DB instance, you can manually promote a Read Replica to become the new primary.
 
-      - Read Replicas can also be used for disaster recovery purposes, or to maintain a copy of your data in a separate region for geographic redundancy.
+      - `Read Replicas can also be used for disaster recovery purposes`, or to maintain a copy of your data in a separate region for geographic redundancy.
 
-      - They can also be used for reporting or data warehousing scenarios where you may want to run heavy analytics queries against the replica, offloading that work from the primary database.
+      - They can also `be used for reporting or data warehousing scenarios` where you may want to run heavy analytics queries against the replica, offloading that work from the primary database.
 
   
   - `Summary`
