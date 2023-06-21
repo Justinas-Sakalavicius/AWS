@@ -1,4 +1,21 @@
-# AWS module 3
+## Self check:
+
+1. Between block, file, object, which AWS services are related to each type?
+2. What's the difference between EBS and EC2 Instance store?
+3. If you need to have a folder, that will be used across a number of instance, what service will you use?
+4. How can you replicate an EBS volume?
+5. You have a static pages you want to expose to the Internet, what will you use for that case?
+6. What are buckets in S3?
+7. What does S3 replication do? What is it for?
+8. What are versions in S3? What does it mean to delete an object in S3 when versioning is enabled?
+9. How is it possible to optimize cost of S3 resources?
+10. How nested file hierarchies are represented in S3?
+11. What does S3 store inside its objects?
+12. Why S3 is better than a physically maintained file server?
+13. How many ways to allow access to S3 bucket do you know?
+14. Is it possible attach EBS volume to a few instances simultaneously?
+15. What is the use scenario for each Amazon FSx file system type?
+
 
 ## Between block, file, object, which AWS service are related to each type?
 Block Storage: AWS provides block storage through the Amazon Elastic Block Store (EBS) service. Block storage is typically used in scenarios where you need to store data in structured blocks within sectors and tracks, such as databases. It's usually associated with Storage Area Network (SAN) environments.

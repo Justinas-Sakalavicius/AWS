@@ -78,4 +78,4 @@
 5. Create an auto-scaling group which scales between 2-3 instances running the custom AMI. Scale out when CPU usage is more than 50%.
 6. Attach an elastic load balancer to the auto-scaling group.
 
-![](ELB.jpg)
+![](images/ELB.jpg)

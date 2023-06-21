@@ -3,7 +3,7 @@ Your AWS account
 
 ## What to do
 Create a VPC which fulfills the following architecture (AWS diagram notation):
-![Architecture](Architecture.png)
+![Architecture](images/Architecture.png)
 
 1. The VPC should have a name following this convention _\<ProjectName\>-Network_ and a CIDR block of _10.0.0.0/16_.
 2. Create an internet gateway named _\<ProjectName\>-IGW_ and attach it to the VPC.
