@@ -155,15 +155,81 @@
 
 ### 12. What are the advantages of API Gateway endpoints over traditional web applications?
 
+ - `Amazon API Gateway` provides several advantages over traditional web applications:
 
+    - `Scalability`: API Gateway automatically handles all the tasks involved in accepting and processing up to hundreds of thousands of concurrent API calls, including traffic management, data mapping, authorization and access control, monitoring, and API version management.
+
+    - `Serverless`: API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. You can create an API that acts as a "front door" for applications to access data, business logic, or functionality from your backend services. This means you don't have to worry about managing servers, which allows you to focus on your application's code.
+
+    - `Integration with AWS Services`: API Gateway is designed to work seamlessly with other AWS services, such as AWS Lambda, AWS IAM for access control, Amazon Cognito for user authentication, and AWS CloudWatch for monitoring. This integration makes it easier to create sophisticated applications with various AWS services.
+
+    - `Cost Efficiency`: With API Gateway, you only pay for the API calls you receive and the amount of data transferred out. There are no minimum fees or upfront commitments.
+
+    - `Security`: API Gateway provides several features that make it easy to secure your APIs. These include AWS IAM roles and policies, AWS Cognito for user authentication, and AWS WAF for protecting against common web exploits.
+
+    - `Performance`: API Gateway provides low latency and high-performance access to your backend services. It also offers features like caching and throttling to improve the performance and manageability of your APIs.
+
+    - `Lifecycle Management`: API Gateway provides built-in versioning and stage management features, making it easy to manage the lifecycle of your APIs.
+
+    - `Development and Testing`: API Gateway provides tools for developing and testing your APIs, such as the API Gateway console, SDK generation, and Swagger/OpenAPI support.
 
 ### 13. What are the typical API Gateway use cases? What is the use case for combining API GW with Lambda?
 
+ - `Amazon API Gateway` is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. 
+ 
+ - `Use cases for API Gateway`:
+    - `Building serverless applications`: API Gateway is often used in combination with AWS Lambda to create serverless applications. This allows developers to build applications that don't require server management, scaling to meet demands and only charging for the compute time that is actually used.
 
+    - `Creating RESTful APIs`: Developers can use API Gateway to create RESTful APIs that offer HTTP(S) access to AWS services, other AWS features, external RESTful services, and serverless Lambda functions.
+
+    - `Creating HTTP APIs`: HTTP APIs are the best way to build APIs that proxy to AWS Lambda functions or HTTP backends, making them ideal for serverless workloads and web applications.
+
+    - `Managing WebSocket APIs`: API Gateway supports WebSocket APIs, allowing real-time two-way communication between servers and clients. This is useful for scenarios such as chat applications, collaborative platforms, and real-time gaming.
+
+    - `API for data processing tasks`: API Gateway, in combination with Lambda, can be used to run compute tasks for data processing. For example, client devices like phones, web browsers, and IoT devices can call an API to run code in Lambda.
+
+    - `Backend for mobile and web applications`: API Gateway can be used to create, deploy, and manage an API as a backend for mobile, web, and other applications. The API can be designed to enable applications to access features or data from backend services.
+
+    - `Microservices architecture`: API Gateway can act as a single entry point for a collection of microservices, helping to encapsulate the internal system architecture and provide a level of abstraction for the service consumers.
+
+    - `API Lifecycle Management`: API Gateway provides built-in features for each stage of an API's lifecycle, from creation to retirement. It helps developers with version control, updates, and deprecations.
+
+ - When `combined with AWS Lambda, API Gateway` enables you to execute business logic without having to manage server resources. 
+ 
+ - `The use of API Gateway with Lambda is especially beneficial for`:
+
+    - `Workloads` that need to be able to scale quickly to handle high demand.
+
+    - `Serverless applications`, where the infrastructure is fully managed by AWS.
+
+    - `Applications with unpredictable or cyclical workloads`.
+
+    - `Rapid prototyping and agile development`, where the infrastructure can be easily changed as requirements evolve.
+
+    - `Situations` where you want to `minimize operational overhead` and `focus` on `writing application` code.
 
 ### 14. What is the use case for combining API GW with Lambda?
 
+ - `Combining AWS Lambda with API Gateway` is commonly done to create serverless, scalable, and cost-effective applications. 
+ 
+    - `Use cases`:
+
+        - `Serverless Web Applications`: You can use API Gateway to route HTTP(S) requests to AWS Lambda functions. This allows you to build an entire web application without having to manage any servers. The Lambda function contains your business logic and can interact with other AWS services such as DynamoDB for data storage.
+
+        - `Microservices`: If you have a microservices architecture, you can use API Gateway as the single entry point for all your services. Each API endpoint can be mapped to a different Lambda function, effectively encapsulating and isolating the responsibilities of each microservice. This combination also makes it easier to scale individual microservices as needed.
+
+        - `Real-time File Processing`: You can use API Gateway to trigger a Lambda function for real-time file processing. For example, you could set up an API endpoint to accept file uploads, which triggers a Lambda function to process the file and store it in S3.
+
+        - `Data Transformation`: API Gateway can transform the data of incoming requests before passing it to a Lambda function and can also transform the data of the response from the Lambda function. This is useful when the client application expects a different data format than what your Lambda function provides.
+
+        - `Backend for Mobile and IoT Applications`: With API Gateway and Lambda, you can build a highly scalable and secure backend for mobile and IoT applications. This allows these applications to access data, business logic, or functionality from your code running on AWS Lambda.
+
+        - `Real-time Stream Processing`: You can use API Gateway to ingest real-time data to a Kinesis stream. A Lambda function can then process the data in the stream in real-time.
 
 ### 15. What is API Gateway pricing?
 
+- For HTTP APIs and REST APIs, `you pay only for the API calls you receive` and `the amount of data transferred out`. There are `no data transfer out charges for Private APIs`. However, AWS PrivateLink charges apply when using Private APIs in API Gateway. `API Gateway` also provides optional `data caching charged at an hourly rate` that varies based on the `cache size` you select. For `WebSocket APIs`, you only pay when your APIs are in use `based on number of messages sent and received and connection minutes`.
 
+- The `Amazon API Gateway free tier` includes one `million API calls received for REST APIs`, `one million API calls received for HTTP APIs`, `and one million messages and 750,000 connection minutes for WebSocket APIs per month` for up to `12 months`. If you exceed this number of calls per month, you will be charged the API Gateway usage rates.
+
+- https://aws.amazon.com/api-gateway/pricing/
