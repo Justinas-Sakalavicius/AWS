@@ -203,3 +203,32 @@ Availability: Not all instance types have Instance Store volumes. When you need 
     - `Amazon FSx for Lustre`: It provides a high-performance file system optimized for fast processing of workloads such as machine learning, high performance computing (HPC), video processing, financial modeling, and electronic design automation (EDA). FSx for Lustre is designed to provide fast I/O performance (millions of IOPS) and can handle large data sets. It can be linked to an Amazon S3 bucket for long-term data storage.
 
         - `Example Scenario`: You might use FSx for Lustre if you're running compute-intensive workloads that require fast processing of large amounts of data. This could include tasks like genomic sequencing, seismic analysis for oil and gas exploration, or financial risk modeling.
+
+### Documentation:
+
+* [Amazon Simple Storage Service Documentation](https://docs.aws.amazon.com/s3/index.html)
+* [Getting started with S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html)
+* [S3 FAQs](https://aws.amazon.com/s3/faqs/)
+* [Amazon S3 Storage Classes](https://aws.amazon.com/s3/storage-classes/)
+* [S3 Object lifecycle management](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html)
+* [S3 Protecting data using encryption](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingEncryption.html)
+
+- [FSx for Lustre](https://docs.aws.amazon.com/fsx/latest/LustreGuide/what-is.html)
+- [FSx for OpenZFS](https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/what-is-fsx.html)
+- [Amazon FSx for Windows File Server](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html)
+- [FSx for ONTAP](https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/what-is-fsx-ontap.html)
+- [AWS FSx Pricing Explained with Real-Life Examples](https://bluexp.netapp.com/blog/aws-fsxo-blg-aws-fsx-pricing-explained-with-real-life-examples)
+- [FSx:Choosing right SMB file storage](https://catalog.workshops.aws/msft-costopt/en-US/storage/fsx/choosing-smb)
+
+- [What is Amazon Elastic File System?](https://docs.aws.amazon.com/efs/latest/ug/index.html)
+- [AWS EFS: Is It the Right Storage Solution for You?](https://cloud.netapp.com/blog/aws-efs-is-it-the-right-storage-solution-for-you)
+- [Amazon’s Elastic File System (EFS) Explained](https://www.bmc.com/blogs/aws-efs-elastic-file-system/)
+- [EFS Backup: Backing Up NFS Data in AWS](https://cloud.netapp.com/blog/efs-backup-methods)
+- [AWS EFS Performance Do’s and Dont's](https://cloud.netapp.com/blog/efs-performance-dos-and-donts-aws-cvo-blg)
+
+- [Amazon Elastic Block Store (EBS)](https://aws.amazon.com/ebs/)
+- [Amazon EBS volume types](https://aws.amazon.com/ebs/volume-types/)
+- [Amazon EBS Snapshots](https://aws.amazon.com/ebs/snapshots/)
+- [Amazon Elastic Block Store (Amazon EBS)](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html)
+- [AWS re:Invent 2019: Deep dive on Amazon EBS](https://www.youtube.com/watch?v=wsMWANWNoqQ)
+- [Amazon Elastic Block Store (EBS) Overview](https://www.youtube.com/watch?v=77qLAl-lRpo)

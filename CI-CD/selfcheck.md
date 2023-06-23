@@ -127,39 +127,107 @@
 ### 10. How would you compare CodeCommit to Git?
 
 - `CodeCommit` is a secure, highly scalable, managed source control service that hosts private Git repositories.​ It provides:
-    - Integration with other AWS services​
-    - Pull requests and approval templates​
-    - Access control​
+    - `Integration with other AWS services​`
+    - `Pull requests and approval templates​`
+    - `Access control​`
+
+- `Summary`, `Git` is the version control system or the tool that you use to manage your code, while `CodeCommit is the service` that hosts your `Git repositories` in the cloud. They work together to provide a complete solution for source control.
 
 ### 11. What are the key elements of an app spec in CodeDeploy?
 
-`CodeDeploy` is a deployment service that automates application deployments to Amazon EC2 instances, on-premises instances, serverless Lambda functions, or Amazon ECS services. You can deploy:​
-- `Code​`
-- `Serverless AWS Lambda functions​`
-- `Web and configuration files​`
-- `Executables​`
-- `Packages​`
-- `Scripts​`
-- `Multimedia files`
+- `Key elements of an AppSpec file in AWS CodeDeploy include`:
+    - `version`: This field is used to specify the version of the AppSpec file.
+
+    - `os`: This field specifies the operating system name.
+
+    - `files`: This section specifies the source and the destination of the files that CodeDeploy will transfer from the application revision that is stored in Amazon S3 or GitHub to instances.
+
+    - `permissions`: This section specifies how special permissions, if any, should be applied to the files that are specified in the files section.
+    
+    - `hooks`: This section specifies scripts or functions to run at set points in the deployment lifecycle.
+
+- `CodeDeploy` is a deployment service that automates application deployments to Amazon EC2 instances, on-premises instances, serverless Lambda functions, or Amazon ECS services. You can deploy:​
+    - `Code​`
+    - `Serverless AWS Lambda functions​`
+    - `Web and configuration files​`
+    - `Executables​`
+    - `Packages​`
+    - `Scripts​`
+    - `Multimedia files`
 
 ### 12. What are the key elements of a build spec in CodeBuild?
 
-`CodeBuild` is a fully managed build service in the cloud. ​It's features include:
+- `A buildspec is a collection of build commands and related settings`, in YAML format, that AWS CodeBuild uses to run a build. 
 
-- `Fully managed` – CodeBuild eliminates the need to set up, patch, update, and manage your own build servers.​
+- `Here are the key elements of a buildspec file`:
 
-- `On demand` – CodeBuild scales on demand to meet your build needs. You pay only for the number of build minutes you consume.​
+    - `version`: This is used to specify the version of the buildspec file.
 
-- `Out of the box` – CodeBuild provides preconfigured build environments for the most popular programming languages. All you need to do is point to your build script to start your first build.​
+    - `phases`: The phases of the build lifecycle. Each phase represents a stage in the build process. For example, install, pre_build, build, post_build.
+
+    - `artifacts`: These are the files to be produced as the output of the build (for example, compiled code, JAR files, WAR files, Docker images).
+
+    - `cache`: This specifies caching paths that can be used to cache resources and speed up subsequent builds.
+
+    - `env`: This is used to specify environment variables for the build.
+
+- `CodeBuild` is a fully managed build service in the cloud. ​It's features include:
+
+    - `Fully managed` – CodeBuild eliminates the need to set up, patch, update, and manage your own build servers.​
+
+    - `On demand` – CodeBuild scales on demand to meet your build needs. You pay only for the number of build minutes you consume.​
+
+    - `Out of the box` – CodeBuild provides preconfigured build environments for the most popular programming languages. All you need to do is point to your build script to start your first build.​
 
 ### 13. What AWS services may aid CodeBuild execution?
 
+ - `AWS services` that can aid AWS CodeBuild execution:
 
+    - `AWS CodePipeline`: AWS CodeBuild can be integrated into AWS CodePipeline to automate the steps in the release process, such as initiating automatic builds, deployments, and testing.
+
+    - `AWS CodeCommit`: AWS CodeCommit is a fully-managed source control service that makes it easy for companies to host secure and highly scalable private Git repositories. AWS CodeBuild can directly interact with repositories in AWS CodeCommit.
+
+    - `AWS CodeDeploy`: AWS CodeDeploy automates code deployments to any instance, including Amazon EC2 instances and on-premises servers. AWS CodeBuild can build your code and then use AWS CodeDeploy to deploy it.
+
+    - `Amazon S3`: AWS CodeBuild can use Amazon S3 to store build output artifacts. Also, you can use S3 to store your code if it isn't stored in a source control repository.
+
+    - `Amazon CloudWatch`: AWS CodeBuild can send metrics and logs to Amazon CloudWatch. This allows you to monitor your builds and also keep a log history of your build details.
+
+    - `AWS Secrets Manager`: AWS CodeBuild can leverage AWS Secrets Manager to handle secrets needed for your build process. This could include database passwords, API keys, and more.
+
+    - `AWS Identity and Access Management (IAM)`: AWS CodeBuild uses IAM to manage permissions to your resources. You can create IAM roles and policies to control what actions can be performed on your resources.
+
+    - `AWS Parameter Store (part of AWS Systems Manager)`: AWS CodeBuild can use Parameter Store to retrieve and use secure strings, such as database connection strings, needed in your build process.
+
+    - `Amazon VPC`: AWS CodeBuild can be configured to access resources within a VPC, such as an ElastiCache cluster, an RDS database, or an EC2 instance.
+
+    - `Amazon ECR`: AWS CodeBuild can use Amazon Elastic Container Registry as a source for your build images, or as a place to push images that have been created as part of the build process.
+
+ - By integrating `AWS CodeBuild` with these services, you can create a complete, automated CI/CD pipeline.
 
 ### 14. What 3rd party tools and other AWS services may participate CodePipeline execution?
 
-- `3rd party tools` and other `AWS services` may `participate CodePipeline execution` -> `SOURCE COLUMN`.
+- `3rd party tools` and other `AWS services` may `participate CodePipeline execution`:
+    - `AWS S3`
+    - `AWS ECR`
+    - `AWS CloudFormation`
+    - `AWS Lambda`
+    - `AWS CodeStar`
+        - `GitHub`: You can use GitHub as a source repository in your pipeline.
+        - `BitBucket`: You can use BitBucket as a source repository in your pipeline.
+        - `Jenkins`: You can use a Jenkins build server to compile code and run tests, and integrate the results with AWS CodePipeline.
+        - `TeamCity`: Similar to Jenkins, TeamCity can be used as a build server that can be integrated with AWS CodePipeline.
+        - `XebiaLabs`: XebiaLabs provides end-to-end pipeline orchestration and reports across all your DevOps tools and systems.
 
 - [CodePipeline actions](https://docs.aws.amazon.com/codepipeline/latest/userguide/integrations-action-type.html) provide a wide variety of AWS and third-party services. The diagram below lists available actions by type:
 
 ![](images/code_pipeline_actions.png)
+
+
+### AWS Documentation
+
+- [Best practices for CI/CD from AWS​](https://docs.aws.amazon.com/whitepapers/latest/practicing-continuous-integration-continuous-delivery/summary-of-best-practices.html)
+- [AWS CodeCommit UserGuide​](https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html)
+- [AWS CodeBuild UserGuide​](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html)
+- [AWS CodeDeploy UserGuide​](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html)
+- [AWS CodePipeline UserGuide​](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html)

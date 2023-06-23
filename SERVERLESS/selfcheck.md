@@ -233,3 +233,8 @@
 - The `Amazon API Gateway free tier` includes one `million API calls received for REST APIs`, `one million API calls received for HTTP APIs`, `and one million messages and 750,000 connection minutes for WebSocket APIs per month` for up to `12 months`. If you exceed this number of calls per month, you will be charged the API Gateway usage rates.
 
 - https://aws.amazon.com/api-gateway/pricing/
+
+### Documentation
+
+- [Tutorial: creating a Lambda-backed API Gateway endpoint](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html)
+- [S3 notifications](https://docs.aws.amazon.com/AmazonS3/latest/userguide/NotificationHowTo.html)

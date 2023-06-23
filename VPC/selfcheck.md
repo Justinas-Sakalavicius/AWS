@@ -140,3 +140,16 @@
 ### 17. Do you pay for VPC when using EC2 instances?
 
   - `No`, you do not pay for the VPC itself when using EC2 instances. The use of Amazon VPC and its features do not incur additional costs. `However`, data transfer and other services within VPC, such as NAT gateway or VPC endpoints, do come with their own costs. Also, the EC2 instances that you run within the VPC are separately billed.
+
+### Documentation:
+
+- [Private Addresses RFC1918](https://tools.ietf.org/html/rfc1918)
+- [Prefixes](https://www.ripe.net/about-us/press-centre/understanding-ip-addressing)
+- [VPC Limits](https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html)
+- [Publishing flow logs to CloudWatch Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-cwl.html)
+- [Publishing flow logs to Amazon S3](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html)
+- [Troubleshooting VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-troubleshooting.html)
+- [VPC Scenarios](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenarios.html)
+- [VPC FAQ](https://aws.amazon.com/ru/vpc/faqs/?nc=sn&loc=5)
+- [AWS Routing 101](https://medium.com/@mda590/aws-routing-101-67879d23014d)
+- [What is bastion?](https://aws.amazon.com/ru/quickstart/architecture/linux-bastion/)

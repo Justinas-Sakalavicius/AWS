@@ -94,3 +94,17 @@
 - `FIFO queues` also support `message groups that allow multiple ordered message groups` within a single FIFO queue. For example, you could group orders by order ID while preserving the submission order for each group. This allows for processing of messages from different groups concurrently, increasing the throughput of the queue while still maintaining the order of messages within each group.
 
 - One `key difference` between the standard `SQS queues` and `FIFO queues` is that while `standard queues` provide maximum throughput, best-effort ordering, and at-least-once delivery, `FIFO queues` provide the `exact order of messages and exactly-once processing`. This means that a message sent once will be delivered once and remain available until a consumer processes and deletes it, and duplicates aren't introduced into the queue.
+
+
+### Documentation
+- [What is Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html)
+- [Amazon SQS FAQs](https://aws.amazon.com/sqs/faqs/)
+- [Introducing Amazon Simple Queue Service (SQS) FIFO Queues – Messaging on AWS](https://www.youtube.com/watch?v=XrX7rb6M3jw&ab_channel=AmazonWebServices )
+- [Amazon SQS dead-letter queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html )
+- [S3 notifications](https://docs.aws.amazon.com/AmazonS3/latest/userguide/NotificationHowTo.html)
+- [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html)
+- [Amazon SNS FAQs](https://aws.amazon.com/sns/faqs/)
+- [Event-Driven Pub-Sub with SNS and SQS](https://www.youtube.com/watch?v=c_WNBmEc6EE&ab_channel=AmazonWebServices)
+- [Common Amazon SNS scenarios](https://docs.aws.amazon.com/sns/latest/dg/sns-common-scenarios.html)
+- [Amazon SNS security](https://docs.aws.amazon.com/sns/latest/dg/sns-security.html)
+- [Getting started with Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/sns-getting-started.html)

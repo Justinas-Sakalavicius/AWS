@@ -114,3 +114,15 @@
 - If there were any issues during the execution of the template, those will also be displayed in the `"Events"` tab of the stack detail page. The events provide a `chronological list of stack creation or update actions`, and can be useful for `troubleshooting issues with your template`.
 
 - You can also view the results of template execution programmatically using the AWS SDK or AWS CLI by using the `describe-stacks` command.
+
+### Documentation: 
+
+- [Getting started with CloudFormation (AWS docs)](https://aws.amazon.com/cloudformation/getting-started/)
+- [CloudFormation Best Practices (AWS docs)](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html)
+- [CloudFormation FAQs (AWS docs)](https://aws.amazon.com/cloudformation/faqs/?nc=sn&loc=5)
+- [CloudFormation Tutorial by "Simplilearn" (video)](https://aws.amazon.com/cloudformation/faqs/?nc=sn&loc=5)
+- [AWS Serverless Application Model (AWS docs)](https://aws.amazon.com/serverless/sam/)
+- [Introducing AWS CloudFormation modules](https://aws.amazon.com/blogs/mt/introducing-aws-cloudformation-modules/)
+- [Introducing a Public Registry for AWS CloudFormation](https://aws.amazon.com/blogs/aws/introducing-a-public-registry-for-aws-cloudformation/)
+- [Using the AWS CloudFormation registry](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry.html)
+- [Cloudformation cli installation (cfn)](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/what-is-cloudformation-cli.html)

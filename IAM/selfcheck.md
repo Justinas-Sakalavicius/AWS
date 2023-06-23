@@ -116,3 +116,9 @@
  - `Attached policies` to a user directly, and `policies attached` to groups that a user is a member of, all apply to the user. `The combined permissions` grant the effective `permissions` for that user. However, if there is an explicit deny in any of these policies, it `overrides any allows`.
 
  - `Note` that AWS IAM `doesn't have a specific order` in which it `evaluates policies`. All policies are evaluated and a decision is made according to the above logic.
+
+### Documentation
+
+* [AWS Intro to IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
+* [AWS Policy evaluation logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html)
+* [AWS IAM FAQs](https://aws.amazon.com/iam/faqs/)
