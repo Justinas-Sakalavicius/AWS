@@ -1,5 +1,7 @@
 ## What to do
 
+![](images/cicd-app-infrastructure.png)
+
 ### Sub-task 1 – create and deploy SAM application
 
 1. Create a SAM application for lambda from the module 9:

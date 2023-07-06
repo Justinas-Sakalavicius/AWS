@@ -1,5 +1,7 @@
 ## What to do
 
+![](images/serverless-app-infrastructure.png)
+
 ### Sub-task 1 – create a Lambda for batching upload notifications
 
 1. Create a Lambda function named _\<ProjectName\>-uploads-batch-notifier_:

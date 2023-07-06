@@ -1,5 +1,7 @@
 ## What to do
 
+![](images/snssqs-app-infrastructure.png)
+
 ### Task – Implement a subscription feature in your web application
 
 1. Create a standard SQS queue named <ProjectName>-uploads-notification-queue.

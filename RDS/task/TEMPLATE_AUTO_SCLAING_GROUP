@@ -1,0 +1,242 @@
+Resources:
+  MyVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MyVPC
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyIG
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref MyVPC
+  PublicSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.10.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: eu-north-1a
+      Tags:
+        - Key: Name
+          Value: PublicSubnetA
+  PrivateSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: eu-north-1a
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetA
+  PublicSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.20.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: eu-north-1b
+      Tags:
+        - Key: Name
+          Value: PublicSubnetB
+  PrivateSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.21.0/24
+      AvailabilityZone: eu-north-1b
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetB
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable
+  PrivateRouteTableA:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableA
+  PrivateRouteTableB:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableB
+  PublicSubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+  PublicInternetRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PrivateSubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+  PrivateSubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
+  PublicWebServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group for EC2 instances
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PublicSG
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: 22
+          CidrIp: 78.56.122.97/32
+  PrivateDBServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    DependsOn: PublicWebServerSecurityGroup
+    Properties:
+      GroupDescription: Security Group for DB Instances
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateSG
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 5432
+        ToPort: 5432
+        SourceSecurityGroupId: !GetAtt 
+          - PublicWebServerSecurityGroup
+          - GroupId
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupName: DBSubnetGroup
+      DBSubnetGroupDescription: Database default north-A region subnet group
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+  RDSInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBInstanceIdentifier: test-aws-database
+      AllocatedStorage: 20
+      DBInstanceClass: db.t3.micro
+      Engine: postgres
+      EngineVersion: 15.3
+      MasterUsername: postgres
+      MasterUserPassword: 55273011
+      AvailabilityZone: eu-north-1a
+      NetworkType: IPV4
+      PubliclyAccessible: false
+      DBName: awsDB
+      VPCSecurityGroups:
+        - !Ref PrivateDBServerSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+  LoadBalancer:
+    DependsOn: RDSInstance
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      SecurityGroups:
+        - !Ref PublicWebServerSecurityGroup
+  TargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref MyVPC
+    DependsOn: LoadBalancer
+  Listener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+  LaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateName: WebApp-Images
+      LaunchTemplateData:
+        ImageId: ami-0fbb3dd2179f6f9d3
+        InstanceType: t3.micro
+        KeyName: awsdemokp
+        NetworkInterfaces:
+          - AssociatePublicIpAddress: true
+            DeviceIndex: 0
+            SubnetId: !Ref PublicSubnetA
+            Groups:
+            - !GetAtt 
+              - PublicWebServerSecurityGroup
+              - GroupId
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              dnf install -y dotnet-sdk-6.0
+              mkdir web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app web-app --recursive
+              cd web-app
+              unzip awsDatabase.zip
+              cd ./publish/
+              dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
+  AutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    DependsOn: LoadBalancer
+    Properties:
+      MinSize: '1'
+      MaxSize: '2'
+      DesiredCapacity: '1'
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      VPCZoneIdentifier:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt 
+          - LaunchTemplate
+          - LatestVersionNumber
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 300
+      MetricsCollection:
+        - Granularity: 1Minute
+      Tags:
+        - Key: Name
+          Value: WebAppServer
+          PropagateAtLaunch: true
