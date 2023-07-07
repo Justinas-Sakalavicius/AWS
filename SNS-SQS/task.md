@@ -2,7 +2,7 @@
 
 ![](images/snssqs-app-infrastructure.png)
 
-### Task – Implement a subscription feature in your web application
+### Sub-task 1 – Implement a subscription feature in your web application
 
 1. Create a standard SQS queue named <ProjectName>-uploads-notification-queue.
 2. Create an SNS topic named <ProjectName>-uploads-notification-topic.
@@ -21,3 +21,4 @@
 9. It’s unlikely that you’ll hit SNS free tier limits, but keep them in mind:
 ![](images/sns_free_tier_limits.png)
 10. Think what are the other ways of receiving SNS notifications for the image uploads (not necessarily in a human-readable form).
+* Optional Task is not mandatory for completion this module but highly recommended, if you don’t have a time to complete it - just skip it
