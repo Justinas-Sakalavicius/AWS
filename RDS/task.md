@@ -13,11 +13,18 @@
 **Note.** The image metadata should include: last update date, name, size(in bytes), and file extension.
 
 ### Sub-task 2 - Add DB instance to store metadata
-1. Create an RDS instance in one of the DB subnets (Private Subnets) of your VPC. Choose creation method and engine type. **WARNING: Select a free-tier template.**
+1. Create an RDS instance in one of the DB subnets (Private Subnets) of your VPC. Choose creation method and engine type. 
+
 ![](./images/rds-engine-1.png)
+
+**WARNING: Select a free-tier template.**
+
 ![](./images/rds-engine-2.png)
+
 2. Be careful during configuring storage for your RDS instance. Choose min allocated storage value to save money.
+
 ![](./images/rds-engine-3.png)
+
 3. After uploading some images, make some SQL queries to the RDS instance bypassing the web application – for example, from the EC2 instances over SSH.
 4. The overall infrastructure should look like this:
 5. Ensure the following non-functional criteria are met: 
