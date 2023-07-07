@@ -188,11 +188,44 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref TargetGroup
+  MyIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'MyIAMRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'ec2.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: 'AccessRDSS3'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - 'rds:*'
+                  - 's3:*'
+                Resource: '*'
+  MyInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: '/'
+      Roles:
+        - Ref: 'MyIAMRole'
   LaunchTemplate:
     Type: 'AWS::EC2::LaunchTemplate'
     Properties:
       LaunchTemplateName: WebApp-Images
       LaunchTemplateData:
+        IamInstanceProfile:
+          Arn: !GetAtt 
+            - MyInstanceProfile
+            - Arn
         ImageId: ami-0fbb3dd2179f6f9d3
         InstanceType: t3.micro
         KeyName: awsdemokp
