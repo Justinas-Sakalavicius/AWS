@@ -202,7 +202,7 @@ Resources:
             Action: 'sts:AssumeRole'
       Path: '/'
       Policies:
-        - PolicyName: 'AccessRDSS3'
+        - PolicyName: 'AccessRDSS3SNSSQS'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -210,6 +210,8 @@ Resources:
                 Action: 
                   - 'rds:*'
                   - 's3:*'
+                  - 'sqs:*'
+                  - 'sns:*'
                 Resource: '*'
   MyInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
@@ -220,7 +222,7 @@ Resources:
   LaunchTemplate:
     Type: 'AWS::EC2::LaunchTemplate'
     Properties:
-      LaunchTemplateName: WebAppRDS-Launch-Template
+      LaunchTemplateName: WebAppSQSSNS-Launch-Template
       LaunchTemplateData:
         IamInstanceProfile:
           Arn: !GetAtt 
@@ -243,9 +245,9 @@ Resources:
               #!/bin/bash
               dnf install -y dotnet-sdk-6.0
               mkdir web-app
-              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsDatabase.zip web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsSNSSQS.zip web-app
               cd web-app
-              unzip awsDatabase.zip
+              unzip awsSNSSQS.zip
               cd ./publish/
               dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
   AutoScalingGroup:
@@ -273,3 +275,28 @@ Resources:
         - Key: Name
           Value: WebAppServer
           PropagateAtLaunch: true
+  MySNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      TopicName: aws-task9-uploads-notification-topic
+  MySQSQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: aws-task9-uploads-notification-queue
+  MyQueuePolicy:
+    Type: 'AWS::SQS::QueuePolicy'
+    Properties:
+      Queues: 
+        - !Ref MySQSQueue
+      PolicyDocument:
+        Statement:
+          - 
+            Action: 
+            - "SQS:SendMessage" 
+            - "SQS:ReceiveMessage"
+            Effect: Allow
+            Resource: !GetAtt MySQSQueue.Arn
+            Principal: '*'
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref MySNSTopic

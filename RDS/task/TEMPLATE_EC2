@@ -168,21 +168,22 @@ Resources:
     DependsOn: RDSInstance
     Properties:
       SubnetId: !Ref PublicSubnetA
-      ImageId: ami-0fbb3dd2179f6f9d3
+      ImageId: ami-080995eccd0180687
       InstanceType: t3.micro
       KeyName: awsdemokp
       SecurityGroupIds:
         - !Ref PublicWebServerSecurityGroup
-      UserData: !Base64 
-        'Fn::Sub': |
-          #!/bin/bash
-          dnf install -y dotnet-sdk-6.0
-          mkdir web-app
-          aws s3 cp s3://justinas-sakalavicius-task2-web-app web-app --recursive
-          cd web-app
-          unzip awsDatabase.zip
-          cd ./publish/
-          dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
+      UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              dnf install -y dotnet-sdk-6.0
+              mkdir web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsDatabase.zip web-app
+              cd web-app
+              unzip awsDatabase.zip
+              cd ./publish/
+              dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
       Tags:
         - Key: Name
           Value: PublicWebApp

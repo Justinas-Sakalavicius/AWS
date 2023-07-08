@@ -14,7 +14,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref AppSubnetId
-      ImageId: ami-0def1e27f6675f4f9
+      ImageId: ami-080995eccd0180687
       InstanceType: t3.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
@@ -29,7 +29,7 @@ Resources:
           #!/bin/bash
           dnf install -y dotnet-sdk-6.0
           mkdir web-app
-          aws s3 cp s3://justinas-sakalavicius-task2-web-app web-app --recursive
+          aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsRegionsAZ.zip web-app
           cd web-app
           unzip awsRegionsAZ.zip
           cd ./publish/
@@ -38,7 +38,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SubnetId: !Ref DBSubnetId
-      ImageId: ami-0def1e27f6675f4f9
+      ImageId: ami-080995eccd0180687
       InstanceType: t3.micro
       KeyName: !Ref KeyPair
       SecurityGroupIds:
