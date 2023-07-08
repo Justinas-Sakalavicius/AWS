@@ -1,0 +1,201 @@
+Description: Cloud Formation template
+Parameters:
+  PublicSubnetAvailabilityZone:
+    Type: String
+    Description: Availability Zone for public subnet
+    Default: eu-north-1a
+  PrivateSubnetAvailabilityZone:
+    Type: String
+    Description: Availability Zone for private subnet
+    Default: eu-north-1b
+  ImageId:
+    Type: String
+    Description: Amazon Linux 2 Kernel 5.10 AMI 2.0.20230504.1 x86_64 HVM gp2
+    Default: ami-080995eccd0180687
+  InstanceType:
+    Type: String
+    Default: t3.micro
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: justinas-sakalavicius-demo-bucket
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: demo-vpc
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Ref PublicSubnetAvailabilityZone
+      CidrBlock: 10.0.11.0/24
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: demo-public-subnet
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Ref PrivateSubnetAvailabilityZone
+      CidrBlock: 10.0.12.0/24
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: demo-private-subnet
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: demo-internet-gateway
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: demo-security-group
+      GroupDescription: >-
+        Security Group for allowing access over HTTP/HTTPS from anywhere and
+        allowing SSH connections from your IP address only
+      VpcId: !Ref VPC
+  SecurityGroupIngressHttp:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref SecurityGroup
+  SecurityGroupIngressHttps:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      CidrIp: 0.0.0.0/0
+      GroupId: !Ref SecurityGroup
+  SecurityGroupIngressSSH:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref SSHLocation
+      GroupId: !Ref SecurityGroup
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      AvailabilityZone: !Ref PublicSubnetAvailabilityZone
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref SecurityGroup
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              dnf install -y dotnet-sdk-6.0
+              mkdir web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsRegionsAZ.zip web-app
+              cd web-app
+              unzip awsRegionsAZ.zip
+              cd ./publish/
+              dotnet awsRegionsAZ.dll --urls "http://0.0.0.0:80"
+      Tags:
+        - Key: Name
+          Value: demo-instance
+  EC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      InstanceProfileName: demo-instance-profile
+      Roles:
+        - !Ref ReadAccessRoleS3New
+  ReadAccessRoleS3New:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: read-access-role-s3
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: read-access-policy-s3
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource: '*'
+  AutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      InstanceId: !Ref EC2Instance
+      VPCZoneIdentifier:
+        - !Ref PublicSubnet
+      MinSize: '2'
+      MaxSize: '3'
+      TargetGroupARNs:
+        - !Ref ALBTargetGroup
+      Tags:
+        - Key: Name
+          Value: demo-auto-scaling-group
+          PropagateAtLaunch: true
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '1'
+        MaxBatchSize: '1'
+        PauseTime: PT15M
+  ApplicationLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet
+        - !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: demo-application-load-balancer
+  ALBListener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: '80'
+      Protocol: HTTP
+  ALBTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: demo-alb-target-group
