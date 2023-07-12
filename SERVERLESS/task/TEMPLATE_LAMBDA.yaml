@@ -202,7 +202,7 @@ Resources:
             Action: 'sts:AssumeRole'
       Path: '/'
       Policies:
-        - PolicyName: 'AccessRDSS3SNSSQSLAMBDA'
+        - PolicyName: 'AccessRDSS3SNSSQS'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -245,9 +245,9 @@ Resources:
               #!/bin/bash
               dnf install -y dotnet-sdk-6.0
               mkdir web-app
-              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsSNSSQS.zip web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsLambda.zip web-app
               cd web-app
-              unzip awsSNSSQS.zip
+              unzip awsLambda.zip
               cd ./publish/
               dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
   AutoScalingGroup:
@@ -300,3 +300,120 @@ Resources:
             Condition:
               ArnEquals:
                 aws:SourceArn: !Ref MySNSTopic
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'LambdaExecutionRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'SQSandCloudWatch'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:*'
+                  - 'sqs:*'
+                  - 'sns:*'
+                Resource: '*'
+  UploadNotificationLambda:
+    DependsOn: AutoScalingGroup
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'AWS-Uploads-Batch-Notifier'
+      Handler: 'AWSLambda1::AWSLambda1.Function::FunctionHandler'
+      Runtime: 'dotnet6'
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: 'justinas-sakalavicius-task2-web-app'
+        S3Key: 'lambda1.zip'
+      Timeout: 30
+  MyApiGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: 'aws-lambda-2-api'
+  MyApiGatewayResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      ParentId: !GetAtt 
+        - MyApiGateway
+        - RootResourceId
+      PathPart: 'MyApiGatewayResource'
+  MyPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      ResourceId: !Ref MyApiGatewayResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: !GetAtt LambdaName.Arn
+  MyDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref MyApiGateway
+    DependsOn: MyPostMethod
+  MyStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      DeploymentId: !Ref MyDeployment
+      StageName: prod
+  MyIPSet:
+    Type: AWS::WAFv2::IPSet
+    Properties:
+      Name: MyIPSet
+      Scope: REGIONAL
+      IPAddressVersion: IPV4
+      Addresses:
+        - 78.56.122.97/32
+  MyWebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: MyWebACL
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      Rules:
+        - Name: IPMatchRule
+          Priority: 1
+          Action:
+            Block: {}
+          Statement:
+            IPSetReferenceStatement:
+              Arn: !GetAtt MyIPSet.Arn
+  MyWebACLAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      WebACLArn: !GetAtt MyWebACL.Arn
+      ResourceArn: !Sub 
+        - 'arn:aws:apigateway:${AWS::Region}::/restapis/${MyApiGateway}/stages/${MyStage}'
+        - MyApiGateway: !Ref MyApiGateway
+          MyStage: prod
+  MyScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: 'rate(5 minutes)'
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt UploadNotificationLambda.Arn
+          Id: MyLambdaTarget
+  MyLambdaPermissionForEvents:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt UploadNotificationLambda.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MyScheduledRule.Arn
