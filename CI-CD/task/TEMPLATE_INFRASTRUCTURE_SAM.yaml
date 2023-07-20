@@ -1,0 +1,449 @@
+Resources:
+  MyBucket: 
+    DependsOn: UploadNotificationS3LambdaPermission
+    Type: 'AWS::S3::Bucket'
+    Properties: 
+      BucketName: 'justinas-sakalavicius-task8-image-api'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt UploadNotificationS3Lambda.Arn
+  PublicReadAccessPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref MyBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Id: 'Policy1688195714536'
+        Statement:
+          - Sid: 'Stmt1688195711744'
+            Effect: 'Allow'
+            Principal: '*'
+            Action: 
+            - 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${MyBucket}/*'
+  MyVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MyVPC
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyIG
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref MyVPC
+  PublicSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.10.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: eu-north-1a
+      Tags:
+        - Key: Name
+          Value: PublicSubnetA
+  PrivateSubnetA:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: eu-north-1a
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetA
+  PublicSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.20.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: eu-north-1b
+      Tags:
+        - Key: Name
+          Value: PublicSubnetB
+  PrivateSubnetB:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.21.0/24
+      AvailabilityZone: eu-north-1b
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetB
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable
+  PrivateRouteTableA:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableA
+  PrivateRouteTableB:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableB
+  PublicSubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+  PublicInternetRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PrivateSubnetARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+  PrivateSubnetBRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
+  PublicWebServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group for EC2 instances
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PublicSG
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: 22
+          CidrIp: 78.56.122.97/32
+  PrivateDBServerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    DependsOn: PublicWebServerSecurityGroup
+    Properties:
+      GroupDescription: Security Group for DB Instances
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateSG
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 5432
+        ToPort: 5432
+        SourceSecurityGroupId: !GetAtt 
+          - PublicWebServerSecurityGroup
+          - GroupId
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupName: DBSubnetGroup
+      DBSubnetGroupDescription: Database default north-A region subnet group
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+  RDSInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBInstanceIdentifier: test-aws-database
+      AllocatedStorage: 20
+      DBInstanceClass: db.t3.micro
+      Engine: postgres
+      EngineVersion: 15.3
+      MasterUsername: postgres
+      MasterUserPassword: 55273011
+      AvailabilityZone: eu-north-1a
+      NetworkType: IPV4
+      PubliclyAccessible: false
+      DBName: awsDB
+      VPCSecurityGroups:
+        - !Ref PrivateDBServerSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+  LoadBalancer:
+    DependsOn: RDSInstance
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      SecurityGroups:
+        - !Ref PublicWebServerSecurityGroup
+  TargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref MyVPC
+    DependsOn: LoadBalancer
+  Listener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+  MyIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'MyIAMRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'ec2.amazonaws.com'
+                - 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: 'AccessRDSS3SNSSQSLambda'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - 'rds:*'
+                  - 's3:*'
+                  - 'sqs:*'
+                  - 'sns:*'
+                  - 'lambda:*'
+                Resource: '*'
+  MyInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: '/'
+      Roles:
+        - Ref: 'MyIAMRole'
+  LaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateName: WebAppLAMBDA-Launch-Template
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Arn: !GetAtt 
+            - MyInstanceProfile
+            - Arn
+        ImageId: ami-080995eccd0180687
+        InstanceType: t3.micro
+        KeyName: awsdemokp
+        NetworkInterfaces:
+          - AssociatePublicIpAddress: true
+            DeviceIndex: 0
+            SubnetId: !Ref PublicSubnetA
+            Groups:
+            - !GetAtt 
+              - PublicWebServerSecurityGroup
+              - GroupId
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              dnf install -y dotnet-sdk-6.0
+              mkdir web-app
+              aws s3 cp s3://justinas-sakalavicius-task2-web-app/awsLambda.zip web-app
+              cd web-app
+              unzip awsLambda.zip
+              cd ./publish/
+              dotnet awsDatabase.dll --urls "http://0.0.0.0:80"
+  AutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    DependsOn: LoadBalancer
+    Properties:
+      MinSize: '2'
+      MaxSize: '2'
+      DesiredCapacity: '2'
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      VPCZoneIdentifier:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt 
+          - LaunchTemplate
+          - LatestVersionNumber
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 300
+      MetricsCollection:
+        - Granularity: 1Minute
+      Tags:
+        - Key: Name
+          Value: WebAppServer
+          PropagateAtLaunch: true
+  MySNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      TopicName: aws-task9-uploads-notification-topic
+  MySQSQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: aws-task9-uploads-notification-queue
+  MyQueuePolicy:
+    Type: 'AWS::SQS::QueuePolicy'
+    Properties:
+      Queues: 
+        - !Ref MySQSQueue
+      PolicyDocument:
+        Statement:
+          - 
+            Action: 
+            - "SQS:SendMessage" 
+            - "SQS:ReceiveMessage"
+            Effect: Allow
+            Resource: !GetAtt MySQSQueue.Arn
+            Principal: '*'
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref MySNSTopic
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'LambdaExecutionRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'SQSandCloudWatch'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:*'
+                  - 'sqs:*'
+                  - 'sns:*'
+                Resource: '*'
+  MyApiGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: 'aws-lambda-2-api'
+      Description: 'My API Gateway'
+      Policy: 
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Deny'
+            Principal: '*'
+            Action: 'execute-api:Invoke'
+            Resource: 'execute-api:/*/*/*'
+            Condition:
+              NotIpAddress:
+                aws:SourceIp: '78.56.122.97/32'
+          - Effect: 'Allow'
+            Principal: '*'
+            Action: 'execute-api:Invoke'
+            Resource: 'execute-api:/*/*/*'
+  MyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      ParentId: !GetAtt
+        - MyApiGateway
+        - RootResourceId
+      PathPart: trigger
+  MyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      ResourceId: !Ref MyResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 
+          - 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations'
+          - LambdaArn: arn:aws:lambda:eu-north-1:530375214676:function:AWS-SAM-Uploads-Batch-Notifier
+  MyDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref MyApiGateway
+    DependsOn: MyMethod
+  MyStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref MyApiGateway
+      DeploymentId: !Ref MyDeployment
+      StageName: prod
+  MyScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: 'rate(5 minutes)'
+      State: ENABLED
+      Targets:
+        - Arn: arn:aws:lambda:eu-north-1:530375214676:function:AWS-SAM-Uploads-Batch-Notifier
+          Id: MyLambdaTarget
+  MyLambdaPermissionForEvents:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-north-1:530375214676:function:AWS-SAM-Uploads-Batch-Notifier
+      Action: 'lambda:InvokeFunction'
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MyScheduledRule.Arn
+  MyLambdaPermissionForApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-north-1:530375214676:function:AWS-SAM-Uploads-Batch-Notifier
+      Action: 'lambda:InvokeFunction'
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn:
+        Fn::Sub:
+          - 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayId}/*'
+          - ApiGatewayId: !Ref MyApiGateway
+  UploadNotificationS3Lambda:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: 'AWS-S3-Lambda-Notifier'
+      Handler: 'AWSLambda2::AWSLambda2.Function::FunctionHandler'
+      Runtime: 'dotnet6'
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: 'justinas-sakalavicius-task2-web-app'
+        S3Key: 'lambda2.zip'
+      Timeout: 30
+  UploadNotificationS3LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt UploadNotificationS3Lambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
